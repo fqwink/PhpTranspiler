@@ -2,7 +2,7 @@
 
 PhpTranspilerは、Adlaire EcosystemのTypeScriptからPHPへの変換を担当する独立ビルドツールである。
 
-実装正本はTypeScriptとし、実行ランタイムはDenoのみとする。Node.js、npm、package-lockファイル、CDN依存は使用しない。
+実装正本はTypeScriptとし、実行ランタイムはDenoのみとする。Node.js、npm、package-lockファイル、CDN依存は通常の実行ランタイムおよび依存物として使用しない。
 
 ローカル検査はDenoで実行する。Adlaire-Ecosystem側のServerFoundation生成検査から利用する場合は、`PHPTRANSPILER_ROOT` または隣接ディレクトリ `../PhpTranspiler` として本リポジトリを参照する。
 
@@ -58,5 +58,6 @@ node node-fallback/run-golden.mjs
 Adlaire-Ecosystem側から明示的に参照する場合:
 
 ```sh
+cd /path/to/Adlaire-Ecosystem
 PHPTRANSPILER_ROOT=/path/to/PhpTranspiler sh Tools/build/check-phptranspiler.sh
 ```
