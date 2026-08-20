@@ -2,7 +2,7 @@
 
 # プロジェクト憲章
 
-**Version:** rev.281
+**Version:** rev.282
 
 PhpTranspilerは、対応構文(第3章)の範囲内で書かれたTypeScriptソースコードをPHPソースコードへ変換する、Adlaire Ecosystem内製の完全独立した開発ツールである。特定のプロジェクトに依存しない専用トランスパイラとして設計し、現時点での主要な適用対象はServerFoundation(SF)のTypeScript開発正本とする。フレームワークにもバックエンド基盤プラットフォームにも該当しない(詳細は `Common_Documents/Adlaire_Ecosystem_Charter` 「PhpTranspiler方針」を参照)。
 
@@ -134,7 +134,7 @@ TypeScriptの組み込みAPIは、以下のホワイトリストに掲げるも�
 
 - PhpTranspilerは、同一のTypeScript入力から、常にバイト単位で同一のPHPコードを生成する(決定性)。ビルドのたびに出力が変動してはならない。checksum検証・release-checkでの監査可能性を担保するための要件とする。
 - PhpTranspilerは、生成するPHPコードに `eval`、動的関数呼び出し(変数関数呼び出し)、文字列結合によるコード生成など、動的コード実行を伴う出力を一切生成しない。第3章で禁止したTypeScript側の構文だけでなく、コード生成の出力自体にもこの原則を課す。
-- PhpTranspilerは、生成PHPコーディング規則(`Documents/GENERATED_PHP_STANDARD.md`)に従う。生成PHPは `<?php` で開始し、2行目に生成ヘッダーを持ち、PHP閉じタグ、CRLF、タブ、末尾空白を含めてはならない。
+- PhpTranspilerは、生成PHPコーディング規則(`Docs/GENERATED_PHP_STANDARD.md`)に従う。生成PHPは `<?php` で開始し、2行目に生成ヘッダーを持ち、PHP閉じタグ、CRLF、タブ、末尾空白を含めてはならない。
 - PhpTranspilerは、生成PHPに危険PHP関数、可変変数、変数関数呼び出し、動的include/requireを含めてはならない。TypeScript import由来の `require_once __DIR__ . '/...';` のみを許可する。
 - PhpTranspilerは、PHPコード生成後、生成物に対して `php -l` 相当の構文検証を自動実行する。検証に失敗した場合、ビルド全体を失敗として停止し、当該PHPファイルを出力しない。
 - PhpTranspilerは、生成するPHPコードのヘッダーコメントに、生成に使用したPhpTranspiler自体の安定版バージョン(`pt.N`、第10章を参照)を記録する。PhpTranspilerは独立リポジトリ `PhpTranspiler` で公開配布する独自の安定版リリース系列を持つため、この`pt.N`が生成物のトレーサビリティを担う。同一`pt.N`・同一TypeScript入力であれば、常に同一のPHPコードを生成する(決定性の維持)。
