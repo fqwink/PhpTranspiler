@@ -1,0 +1,17 @@
+# PhpTranspiler
+
+# 変更履歴
+
+本ファイルは、PhpTranspiler独立リポジトリにおけるPhpTranspiler専用の変更履歴を記録する正本である。
+
+移行前のPhpTranspiler関連履歴は、`Adlaire-Docs/Common_Documents/Change_History` および `Adlaire-Docs/Common_Documents/Development_History` の過去記録を参照する。
+
+---
+
+# 1. 移行記録
+
+## rev.280
+
+- PhpTranspilerを独立リポジトリ `PhpTranspiler` へ移行する方針を確定した。
+- 開発正本、仕様・設計、テスト、golden、生成PHP標準、変更履歴、リリースノート、GitHub Releases配置を `PhpTranspiler` リポジトリで一元管理する。
+- 移行後のPhpTranspiler変更履歴とリリース履歴は、本ファイルおよび `PhpTranspiler` リポジトリ側のリリース記録で管理する。

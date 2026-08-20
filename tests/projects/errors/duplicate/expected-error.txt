@@ -1,0 +1,1 @@
+duplicate PHP class name: DuplicateName

@@ -1,0 +1,6 @@
+{
+  "tasks": {
+    "test": "deno run --allow-read --allow-write --allow-run tests/run-golden.ts",
+    "transpile": "deno run --allow-read --allow-write src/main.ts"
+  }
+}

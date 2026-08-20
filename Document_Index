@@ -1,0 +1,8 @@
+# PhpTranspiler ドキュメント索引
+
+- `Project_Charter`(仕様・設計を統合管理)
+- `Change_History`(PhpTranspiler専用の変更履歴)
+- `README.md`
+- `LICENSE`
+- 参照元: `Adlaire-Docs/Common_Documents/Adlaire_Ecosystem_Charter`(Adlaire Ecosystemとの境界)
+- 参照元: `Adlaire-Docs/Document_Charter`(リポジトリ構成とリリース方針)
