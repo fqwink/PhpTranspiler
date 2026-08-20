@@ -16,7 +16,7 @@ PhpTranspilerは、Adlaire EcosystemのTypeScriptからPHPへの変換を担当�
 - `tests/run-golden.ts`: ゴールデンテストおよび非対応入力テストのランナー。
 - `tests/golden/`: 固定TypeScript入力と期待PHP出力のペア。
 - `tests/errors/`: 固定非対応TypeScript入力と期待エラーのペア。
-- `GENERATED_PHP_STANDARD.md`: 生成PHPのコーディング規則と安全規則。
+- `Documents/`: 仕様・設計、変更履歴、生成PHP規則を管理するドキュメント領域。
 
 ## 対応範囲
 
@@ -38,7 +38,7 @@ PhpTranspiler pt.0.59は、PHP 8.4以降の安全・安定サブセットを対�
 
 非対応TypeScript構文は、PHP生成前にビルドエラーにしなければならない。テストランナーは、ゴールデンPHP出力、ディレクトリ/プロジェクト入力出力、PHP構文、クラス重複拒否、非対応入力の期待失敗ケースを検証する。
 
-生成PHPはファイル書き込み前に、`GENERATED_PHP_STANDARD.md` に基づいて監査する。未変換TypeScript断片、危険PHP関数、可変変数、変数関数呼び出し、動的include/require、PHP 8.4/8.5非推奨生成物、閉じPHPタグ、CRLF、タブ、末尾空白が残った場合はビルドエラーとする。これにより、非対応入力が壊れたリリース成果物を静かに生成することを防ぐ。
+生成PHPはファイル書き込み前に、`Documents/GENERATED_PHP_STANDARD.md` に基づいて監査する。未変換TypeScript断片、危険PHP関数、可変変数、変数関数呼び出し、動的include/require、PHP 8.4/8.5非推奨生成物、閉じPHPタグ、CRLF、タブ、末尾空白が残った場合はビルドエラーとする。これにより、非対応入力が壊れたリリース成果物を静かに生成することを防ぐ。
 
 ## コマンド
 

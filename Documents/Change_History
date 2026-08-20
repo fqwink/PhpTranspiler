@@ -10,6 +10,12 @@
 
 # 1. 移行記録
 
+## rev.281
+
+- PhpTranspilerリポジトリ内の仕様、索引、変更履歴、生成PHP規則を `Documents/` フォルダへ集約した。
+- `README.md` と `LICENSE` はGitHubリポジトリの標準入口としてルート直下に維持した。
+- READMEおよび文書索引の参照パスを `Documents/` 配下へ更新した。
+
 ## rev.280
 
 - PhpTranspilerを独立リポジトリ `PhpTranspiler` へ移行する方針を確定した。
