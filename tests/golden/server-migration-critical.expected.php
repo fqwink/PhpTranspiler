@@ -108,7 +108,7 @@ final class ServerMigrationCriticalBridge {
     $classList = $otherDomNode->classList;
     $featured = $classList->contains("featured");
     $quoted = DOMXPath::quote("value");
-    $xpath->registerPhpFunctionNS("urn:adlaire", "format", "format_callback");
+    $xpath->registerPhpFunctionNS("urn:example", "format", "format_callback");
     $iana = $timezone->getIanaID();
     $parsed = $formatter->parseToCalendar("2026-08-16");
     $gregorianDate = IntlGregorianCalendar::createFromDate(2026, 7, 16);
@@ -117,7 +117,7 @@ final class ServerMigrationCriticalBridge {
     $soapResponse = $soapServer->__getLastResponse();
     $nextSibling = $tidyNode->getNextSibling();
     $previousSibling = $tidyNode->getPreviousSibling();
-    $xslt->registerPhpFunctionNS("urn:adlaire", "render", "render_callback");
+    $xslt->registerPhpFunctionNS("urn:example", "render", "render_callback");
     return ['position' => $position, 'disconnected' => $disconnected, 'preceding' => $preceding, 'following' => $following, 'contains' => $contains, 'containedBy' => $containedBy, 'selected' => $selected, 'selectedAll' => $selectedAll, 'featured' => $featured, 'quoted' => $quoted, 'iana' => $iana, 'parsed' => $parsed, 'gregorianDate' => $gregorianDate, 'gregorianDateTime' => $gregorianDateTime, 'soapResponse' => $soapResponse, 'nextSibling' => $nextSibling, 'previousSibling' => $previousSibling];
   }
   public function php84ClassAndConstantHelpers(string $path, mixed $reflector, mixed $initializer, mixed $lazyObject, mixed $property): mixed {
@@ -135,9 +135,9 @@ final class ServerMigrationCriticalBridge {
     $backgroundQos = Pcntl\QosClass::Background;
     $mysqlDriver = new Pdo\Mysql("mysql:host=localhost");
     $pgsqlDriver = new Pdo\Pgsql("pgsql:host=localhost");
-    $odbcDriver = new Pdo\Odbc("odbc:adlaire");
+    $odbcDriver = new Pdo\Odbc("odbc:example");
     $dbLibDriver = new Pdo\DbLib("dblib:host=localhost");
-    $firebirdDriver = new Pdo\Firebird("firebird:dbname=localhost:/tmp/adlaire.fdb");
+    $firebirdDriver = new Pdo\Firebird("firebird:dbname=localhost:/tmp/phptranspiler_fixture.fdb");
     $html = Dom\HTMLDocument::createFromString("<main></main>");
     $xml = Dom\XMLDocument::createFromString("<root />");
     $reflectedConstant = new ReflectionConstant("PHP_VERSION");
@@ -205,14 +205,14 @@ final class ServerMigrationCriticalBridge {
   }
   public function php84DbaAndOdbcHelpers(string $path): mixed {
     $dba = dba_open($path, "c", "flatfile");
-    dba_replace("site", "Adlaire", $dba);
+    dba_replace("site", "Example", $dba);
     $dbaValue = dba_fetch("site", $dba);
     $dbaExists = dba_exists("site", $dba);
     $dbaFirst = dba_firstkey($dba);
     $dbaNext = dba_nextkey($dba);
     dba_sync($dba);
     dba_close($dba);
-    $connection = odbc_connect("adlaire", "", "");
+    $connection = odbc_connect("example", "", "");
     $result = odbc_exec($connection, "SELECT 1 AS value");
     $row = odbc_fetch_array($result);
     $objectRow = odbc_fetch_object($result);
@@ -228,7 +228,7 @@ final class ServerMigrationCriticalBridge {
     $db->exec("CREATE TABLE IF NOT EXISTS settings (key TEXT PRIMARY KEY, value TEXT NOT NULL)");
     $statement = $db->prepare("INSERT INTO settings (key, value) VALUES (:key, :value)");
     $statement->bindValue(":key", "site_name", PDO::PARAM_STR);
-    $statement->bindValue(":value", "Adlaire", PDO::PARAM_STR);
+    $statement->bindValue(":value", "Example", PDO::PARAM_STR);
     $statement->execute();
     $rows = $db->query("SELECT key, value FROM settings")->fetchAll(PDO::FETCH_ASSOC);
     return ['rows' => $rows, 'lastId' => $db->lastInsertId()];
@@ -298,7 +298,7 @@ final class ZipBinaryBridge {
     return $data;
   }
 }
-final class ServerFoundationCompletionBridge {
+final class CompletionBridge {
   public function htmlSafety(string $value, string $content, string $reason): string {
     $label = $reason !== "" ? "対象 / " . $reason : "対象";
     return '<div class="notice">' . htmlspecialchars($label, ENT_QUOTES | ENT_SUBSTITUTE, "UTF-8") . '</div>' . nl2br(htmlspecialchars($content, ENT_QUOTES | ENT_SUBSTITUTE, "UTF-8"));

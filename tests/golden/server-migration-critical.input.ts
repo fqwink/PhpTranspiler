@@ -155,7 +155,7 @@ export class ServerMigrationCriticalBridge {
     const classList = Php.domElementClassList(otherDomNode);
     const featured = Php.domTokenListContains(classList, "featured");
     const quoted = Php.domXPathQuote("value");
-    Php.domXPathRegisterPhpFunctionNS(xpath, "urn:adlaire", "format", "format_callback");
+    Php.domXPathRegisterPhpFunctionNS(xpath, "urn:example", "format", "format_callback");
     const iana = Php.intlTimeZoneGetIanaId(timezone);
     const parsed = Php.intlDateFormatterParseToCalendar(formatter, "2026-08-16");
     const gregorianDate = Php.intlGregorianCalendarCreateFromDate(2026, 7, 16);
@@ -164,7 +164,7 @@ export class ServerMigrationCriticalBridge {
     const soapResponse = Php.soapServerGetLastResponse(soapServer);
     const nextSibling = Php.tidyNodeGetNextSibling(tidyNode);
     const previousSibling = Php.tidyNodeGetPreviousSibling(tidyNode);
-    Php.xsltProcessorRegisterPhpFunctionNS(xslt, "urn:adlaire", "render", "render_callback");
+    Php.xsltProcessorRegisterPhpFunctionNS(xslt, "urn:example", "render", "render_callback");
     return { position, disconnected, preceding, following, contains, containedBy, selected, selectedAll, featured, quoted, iana, parsed, gregorianDate, gregorianDateTime, soapResponse, nextSibling, previousSibling };
   }
 
@@ -183,9 +183,9 @@ export class ServerMigrationCriticalBridge {
     const backgroundQos = Php.pcntlQosClass("Background");
     const mysqlDriver = Php.pdoMysqlDriver("mysql:host=localhost");
     const pgsqlDriver = Php.pdoPgsqlDriver("pgsql:host=localhost");
-    const odbcDriver = Php.pdoOdbcDriver("odbc:adlaire");
+    const odbcDriver = Php.pdoOdbcDriver("odbc:example");
     const dbLibDriver = Php.pdoDbLibDriver("dblib:host=localhost");
-    const firebirdDriver = Php.pdoFirebirdDriver("firebird:dbname=localhost:/tmp/adlaire.fdb");
+    const firebirdDriver = Php.pdoFirebirdDriver("firebird:dbname=localhost:/tmp/phptranspiler_fixture.fdb");
     const html = Php.domHtmlDocumentFromString("<main></main>");
     const xml = Php.domXmlDocumentFromString("<root />");
     const reflectedConstant = Php.reflectionConstant("PHP_VERSION");
@@ -313,14 +313,14 @@ export class ServerMigrationCriticalBridge {
 
   public php84DbaAndOdbcHelpers(path: string): any {
     const dba = Php.dbaOpen(path, "c", "flatfile");
-    Php.dbaReplace("site", "Adlaire", dba);
+    Php.dbaReplace("site", "Example", dba);
     const dbaValue = Php.dbaFetch("site", dba);
     const dbaExists = Php.dbaExists("site", dba);
     const dbaFirst = Php.dbaFirstKey(dba);
     const dbaNext = Php.dbaNextKey(dba);
     Php.dbaSync(dba);
     Php.dbaClose(dba);
-    const connection = Php.odbcConnect("adlaire", "", "");
+    const connection = Php.odbcConnect("example", "", "");
     const result = Php.odbcExec(connection, "SELECT 1 AS value");
     const row = Php.odbcFetchArray(result);
     const objectRow = Php.odbcFetchObject(result);
@@ -337,7 +337,7 @@ export class ServerMigrationCriticalBridge {
     Php.pdoExec(db, "CREATE TABLE IF NOT EXISTS settings (key TEXT PRIMARY KEY, value TEXT NOT NULL)");
     const statement = Php.pdoPrepare(db, "INSERT INTO settings (key, value) VALUES (:key, :value)");
     Php.pdoStatementBindValue(statement, ":key", "site_name", PDO.PARAM_STR);
-    Php.pdoStatementBindValue(statement, ":value", "Adlaire", PDO.PARAM_STR);
+    Php.pdoStatementBindValue(statement, ":value", "Example", PDO.PARAM_STR);
     Php.pdoStatementExecute(statement);
     const rows = Php.pdoStatementFetchAll(Php.pdoQuery(db, "SELECT key, value FROM settings"), PDO.FETCH_ASSOC);
     return { rows, lastId: Php.pdoLastInsertId(db) };
@@ -429,7 +429,7 @@ export class ZipBinaryBridge {
 }
 
 
-export class ServerFoundationCompletionBridge {
+export class CompletionBridge {
   public htmlSafety(value: string, content: string, reason: string): string {
     const label = reason !== "" ? "対象 / " + reason : "対象";
     return '<div class="notice">' + Php.escapeHtml(label) + '</div>' + Php.nl2br(Php.escapeHtml(content));

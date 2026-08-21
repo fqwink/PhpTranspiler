@@ -4,16 +4,28 @@
 
 本ファイルは、PhpTranspiler独立リポジトリにおけるPhpTranspiler専用の変更履歴を記録する正本である。
 
-移行前のPhpTranspiler関連履歴は、`Adlaire-Docs/Common_Documents/Change_History` および `Adlaire-Docs/Common_Documents/Development_History` の過去記録を参照する。
+このファイルは、本リポジトリ内の変更履歴のみを管理する。
 
 ---
 
 # 1. 移行記録
 
+## rev.285
+
+- Project_Charterの名前空間方針を、実装済みの `@php-namespace` ディレクティブに合わせて更新した。
+- Deno runner、Node.js fallback、PHP CLI構文検証の責務分担をREADMEとProject_Charterに明記した。
+- 存在しないrelease/package前提を、現行のgolden/error検査と `Tools/check/` 前提へ整理した。
+
+## rev.284
+
+- PhpTranspilerを外部エコシステムに依存しない独立プロジェクトとして整理した。
+- README、AGENTS、文書索引、Project_Charter、生成PHP規則から外部プロジェクト固有の参照を削除した。
+- 検査シェルから外部検査ツールへの自動依存を削除した。
+
 ## rev.283
 
-- PhpTranspiler専用の検査シェルを `Adlaire-Ecosystem` から `Tools/check/` へ移行した。
-- `Tools/check/check-phptranspiler.sh` と `Tools/check/run-golden.sh` を追加し、Deno、Adlaire-Ecosystem Docker build tools、Node.js fallbackの順に検査経路を選択するようにした。
+- PhpTranspiler専用の検査シェルを `Tools/check/` へ配置した。
+- `Tools/check/check-phptranspiler.sh` と `Tools/check/run-golden.sh` を追加し、Deno、Node.js fallbackの順に検査経路を選択するようにした。
 - README、AGENTS、文書索引を新しい検査シェル配置へ更新した。
 
 ## rev.282
@@ -29,6 +41,6 @@
 
 ## rev.280
 
-- PhpTranspilerを独立リポジトリ `PhpTranspiler` へ移行する方針を確定した。
+- PhpTranspilerを独立リポジトリ `PhpTranspiler` で管理する方針を確定した。
 - 開発正本、仕様・設計、テスト、golden、生成PHP標準、変更履歴、リリースノート、GitHub Releases配置を `PhpTranspiler` リポジトリで一元管理する。
 - 移行後のPhpTranspiler変更履歴とリリース履歴は、本ファイルおよび `PhpTranspiler` リポジトリ側のリリース記録で管理する。

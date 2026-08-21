@@ -2,26 +2,26 @@
 
 # プロジェクト憲章
 
-**Version:** rev.282
+**Version:** rev.285
 
-PhpTranspilerは、対応構文(第3章)の範囲内で書かれたTypeScriptソースコードをPHPソースコードへ変換する、Adlaire Ecosystem内製の完全独立した開発ツールである。特定のプロジェクトに依存しない専用トランスパイラとして設計し、現時点での主要な適用対象はServerFoundation(SF)のTypeScript開発正本とする。フレームワークにもバックエンド基盤プラットフォームにも該当しない(詳細は `Common_Documents/Adlaire_Ecosystem_Charter` 「PhpTranspiler方針」を参照)。
+PhpTranspilerは、対応構文(第3章)の範囲内で書かれたTypeScriptソースコードをPHPソースコードへ変換する、完全独立した開発ツールである。特定のプロジェクトに依存しない専用トランスパイラとして設計する。フレームワークにもバックエンド基盤プラットフォームにも該当しない。
 
-開発正本はTypeScriptとし、独立リポジトリ `PhpTranspiler` で管理する。`Adlaire-Ecosystem` の `Tools/` 配下には含めず、`Adlaire-Ecosystem` にはPhpTranspiler本体を常置しない。実行ランタイムはDenoのみとする。原則としてテスト・ビルドは専用Docker(Deno + PHP 8.4 CLI)で実行する。専用Dockerが使用できない場合に限り、開発・ビルド・テスト用途のNode.js使用を許容する。ただし、PhpTranspilerの実行ランタイムをNode.jsへ変更してはならず、Node.js/npm依存物を利用者実行環境、Adlaire Studio配布zip、PhpTranspiler配布物へ含めてはならない。
+開発正本はTypeScriptとし、独立リポジトリ `PhpTranspiler` で管理する。実行ランタイムはDenoのみとする。標準検査はDenoとPHP 8.4 CLIで実行する。Denoが使用できない場合に限り、開発・検査用途のNode.jsフォールバックを許容する。ただし、PhpTranspilerの実行ランタイムをNode.jsへ変更してはならず、Node.js/npm依存物を利用者実行環境またはPhpTranspiler配布物へ含めてはならない。
 
 ---
 
 # 1. 責務
 
-- 対応構文(第3章)の範囲内のTypeScriptソースコードを、任意のファイル単位でPHPソースコードへ変換する。現時点での主要な適用対象は、SFのTypeScript開発正本(`ServerFoundation.ts`、`ServerFoundationInternal.ts`)からPHPソースコード(`ServerFoundation.php`、`ServerFoundationInternal.php`)への変換である。
-- InternalAPIが格納する契約定義と、SFのTypeScript開発正本との型整合性を、ビルド時に検証する。
+- 対応構文(第3章)の範囲内のTypeScriptソースコードを、任意のファイル単位でPHPソースコードへ変換する。
+- 複数ファイル入力時の import 関係、生成先、名前衝突を、ビルド時に検証する。
 - 対応構文の範囲外のTypeScriptを検出した場合、ビルドを失敗させ、リリースを止める。
 
 ---
 
 # 2. 対象外
 
-- SF以外のコンポーネント(StaticPublisher、AdminFrontend、EditorSystemなど)の変換は対象外とする。これらは100% TypeScript/JavaScript製であり、PHP生成の対象にならない。
-- 既存の手書きPHP実装からの移行作業そのものは対象外とする。移行の実施には、別途 `Common_Documents/Development_Plan` へ新フェーズとして起案し、ユーザー承認を得る。
+- 対応構文の範囲外にあるTypeScript構文や実行モデルの変換は対象外とする。
+- 既存の手書きPHP実装からの移行作業そのものは対象外とする。
 
 ---
 
@@ -43,7 +43,7 @@ PhpTranspilerは、対応構文(第3章)の範囲内で書かれたTypeScriptソ
 
 ## 除外構文(非対応、使用禁止)
 
-- async/await、Promise(SFは1リクエスト1同期実行のモデルであり、非同期処理は許容しない)
+- async/await、Promise
 - デコレータ(Decorators)
 - 動的import()、eval、`Function` コンストラクタ、その他の動的コード実行
 - Proxy、Reflect
@@ -87,7 +87,7 @@ TypeScriptの組み込みAPIは、以下のホワイトリストに掲げるも�
 | `JSON.stringify` | `json_encode` | |
 | `JSON.parse` | `json_decode`(連想配列モード) | |
 
-- 対応APIの拡張が必要になった場合は、第3章の対応構文と同様、事前にユーザー承認を得た上でPhpTranspiler本体を改修する。
+- 対応APIの拡張が必要になった場合は、第3章の対応構文と同様、仕様とgoldenを更新した上でPhpTranspiler本体を改修する。
 - `Math.random` は、暗号論的安全性を持たない乱数生成であるため、本ホワイトリストには含めない。乱数が必要な処理は対象外とする。
 
 ---
@@ -115,16 +115,16 @@ TypeScriptの組み込みAPIは、以下のホワイトリストに掲げるも�
 
 - PhpTranspilerは、非対応構文を検出した場合、該当ファイル名・行番号・検出した構文名を含むエラーメッセージを出力し、変換処理を中断する。部分的な生成物は一切出力しない。
 - 第4章のホワイトリストに存在しない組み込みAPI呼び出しを検出した場合も、非対応構文の検出と同様にビルドを失敗させる。
-- 複数ファイルを変換する際、PHP出力側でクラス名・関数名が重複する場合、ビルドを失敗させる(名前衝突検出)。PHPは名前空間を使用しない方針(第7章)のため、これをビルド時の必須検証項目とする。
-- ビルドスクリプト(`release-flow.sh` 等)は、PhpTranspilerが非ゼロ終了コードを返した場合、後続のrelease-check・package工程を実行せず、ビルド全体を失敗として停止する。
-- 対応構文の拡張が必要になった場合は、事前にユーザー承認を得た上でPhpTranspiler本体を改修する。
+- 複数ファイルを変換する際、同一出力内でクラス名・関数名が重複する場合、ビルドを失敗させる(名前衝突検出)。`@php-namespace` による名前空間出力を使用する場合でも、PhpTranspilerの入力単位で検出可能な重複は失敗させる。
+- 検査スクリプトは、PhpTranspilerが非ゼロ終了コードを返した場合、後続検査を実行せず、検査全体を失敗として停止する。
+- 対応構文の拡張が必要になった場合は、仕様とgoldenを更新した上でPhpTranspiler本体を改修する。
 
 ---
 
 # 7. その他の設計方針
 
-- モジュール構成: エントリポイント(`ServerFoundation.ts`)は、内部処理(`ServerFoundationInternal.ts`)を通常のTypeScript importで参照する。PhpTranspilerはこれをPHPの `require_once` へ変換する。
-- 命名規則: TypeScript側のクラス名・関数名は、生成後のPHPでもそのまま(名前変更なし)保持する。PHPは名前空間を使用しない。
+- モジュール構成: 通常のTypeScript importをPHPの `require_once` へ変換する。
+- 命名規則: TypeScript側のクラス名・関数名は、生成後のPHPでもそのまま(名前変更なし)保持する。PHP名前空間は、入力ファイル内の `@php-namespace` ディレクティブで明示された場合のみ生成する。
 - CLI仕様: 入力ファイル/ディレクトリと出力先ディレクトリをコマンドライン引数で指定する。コンパイル対象一覧などの設定を要する場合は、設定ファイルをJSON形式とする。終了コードは、成功時0、対応構文・組み込みAPI・名前衝突などの検証エラー時1、PhpTranspiler自体の内部エラー(バグ)時2とする。
 - ソースマップ相当の情報: 生成PHPコードの各ブロックに、対応する元のTypeScriptファイル名・行番号を示すコメントを付与する。生成PHPコードの実行時エラーを元のTypeScriptソースへ追跡可能にするための要件とする。
 
@@ -132,22 +132,22 @@ TypeScriptの組み込みAPIは、以下のホワイトリストに掲げるも�
 
 # 8. 生成コードの安全性・決定性
 
-- PhpTranspilerは、同一のTypeScript入力から、常にバイト単位で同一のPHPコードを生成する(決定性)。ビルドのたびに出力が変動してはならない。checksum検証・release-checkでの監査可能性を担保するための要件とする。
+- PhpTranspilerは、同一のTypeScript入力から、常にバイト単位で同一のPHPコードを生成する(決定性)。ビルドのたびに出力が変動してはならない。golden検査と差分監査の安定性を担保するための要件とする。
 - PhpTranspilerは、生成するPHPコードに `eval`、動的関数呼び出し(変数関数呼び出し)、文字列結合によるコード生成など、動的コード実行を伴う出力を一切生成しない。第3章で禁止したTypeScript側の構文だけでなく、コード生成の出力自体にもこの原則を課す。
 - PhpTranspilerは、生成PHPコーディング規則(`Docs/GENERATED_PHP_STANDARD.md`)に従う。生成PHPは `<?php` で開始し、2行目に生成ヘッダーを持ち、PHP閉じタグ、CRLF、タブ、末尾空白を含めてはならない。
 - PhpTranspilerは、生成PHPに危険PHP関数、可変変数、変数関数呼び出し、動的include/requireを含めてはならない。TypeScript import由来の `require_once __DIR__ . '/...';` のみを許可する。
-- PhpTranspilerは、PHPコード生成後、生成物に対して `php -l` 相当の構文検証を自動実行する。検証に失敗した場合、ビルド全体を失敗として停止し、当該PHPファイルを出力しない。
+- Deno golden runnerは、PHPコード生成後、生成物に対して `php -l` 相当の構文検証を実行する。検証に失敗した場合、検査全体を失敗として停止する。Node.jsフォールバックrunnerはgolden出力一致の確認に限定し、PHP構文検証は標準検査経路で実行する。
 - PhpTranspilerは、生成するPHPコードのヘッダーコメントに、生成に使用したPhpTranspiler自体の安定版バージョン(`pt.N`、第10章を参照)を記録する。PhpTranspilerは独立リポジトリ `PhpTranspiler` で公開配布する独自の安定版リリース系列を持つため、この`pt.N`が生成物のトレーサビリティを担う。同一`pt.N`・同一TypeScript入力であれば、常に同一のPHPコードを生成する(決定性の維持)。
 
 ---
 
 # 9. テスト方針
 
-- PhpTranspiler本体、および生成されるPHPコードの正当性検証は、`Document_Charter` 第17章(テスト方針)が定める「安全制御・データ保全に関わるロジック」の優先テスト対象に含める。
+- PhpTranspiler本体、および生成されるPHPコードの正当性検証を優先テスト対象に含める。
 - 対応構文・組み込みAPI(第3章・第4章)のそれぞれについて、TypeScript入力と期待されるPHP出力のペアを固定化したゴールデンファイル(スナップショット)を用意し、実際の生成結果との差分検出をテストの基本手段とする。第8章が定める決定性要件の検証も、このゴールデンファイルテストによって担保する。
-- 非対応構文・非対応APIについては、期待されるエラーメッセージを固定化した失敗ケースを用意する。非対応入力を壊れたPHPとして出力しないことを、release-checkで検証する。
-- ゴールデンテストで生成したPHPは、PHP 8.4 CLIの `php -l` 相当で構文検証する。
-- ゴールデンファイルは、独立リポジトリ `PhpTranspiler` 配下のテスト領域で管理する。Adlaire Studio配布zipには含めない。
+- 非対応構文・非対応APIについては、期待されるエラーメッセージを固定化した失敗ケースを用意する。非対応入力を壊れたPHPとして出力しないことを、golden/error検査で検証する。
+- Deno golden runnerで生成したPHPは、PHP 8.4 CLIの `php -l` 相当で構文検証する。
+- ゴールデンファイルは、独立リポジトリ `PhpTranspiler` 配下のテスト領域で管理する。配布物には必要なものだけを含める。
 
 ## 9.1 現在の実装到達点
 
@@ -155,7 +155,7 @@ TypeScriptの組み込みAPIは、以下のホワイトリストに掲げるも�
 
 - CLI、入力ファイル/ディレクトリ走査、出力先ディレクトリ生成、クラス名重複検出、`pt.<major>.<minor>` バージョン形式検証。
 - exported class、interface、implements、top-level function、readonly property、constructor、typed method、static method、TypeScript importからPHP `require_once` への変換。
-- ServerFoundation本体2ファイル移行で必要なPHPファイルディレクティブとして、`declare(strict_types=1)`、`namespace`、`use`、定数未定義時のBootstrap実行入口を生成できる。
+- PHPファイルディレクティブとして、`declare(strict_types=1)`、`namespace`、`use`、定数未定義時のBootstrap実行入口を生成できる。
 - `string`、`number`、`boolean`、`void`、`never`、`unknown`、`any`、配列型のPHP型変換。
 - `Array<T>`、単純union/null型、optional parameter、default parameter、constructor parameter property、ネストした引数リストの変換。
 - 変数宣言、配列/オブジェクト分割代入、単純代入、一般式代入、複合代入、配列/連想配列indexアクセス、object風プロパティアクセス、return/throw、条件式、文字列連結、`this.`、optional chaining、null coalescing、三項演算子、`typeof` type guard、`instanceof`、`undefined`、`Error`、catch、テンプレートリテラル、`switch` / `case` / `default`、`break`、`continue`、式を対象にできる `for...of` / `for...in`、`length`、`includes`、`join`、`slice`、`push` の変換。
@@ -163,23 +163,23 @@ TypeScriptの組み込みAPIは、以下のホワイトリストに掲げるも�
 - 文字列API(`trim`、`toUpperCase`、`toLowerCase`、`split`、`slice`、`replace`、`startsWith`、`endsWith`)、単純な文字列helper chain、`String(...).trim()`、object風プロパティ上の文字列API、`this.property` 上の文字列API、Math API(`floor`、`ceil`、`round`、`max`、`min`、`abs`)、Date API(`Date.now`、`Date.parse`)、JSON API(`stringify`、`parse`)、Object API(`keys`、`values`、`entries`)、Array API(`isArray`)、Number API(`isInteger`、`isFinite`)、cast helper(`String`、`Number`、`Boolean`、`parseInt`、`parseFloat`)の変換。
 - 基本 `for`、配列リテラル、オブジェクトリテラル、quoted keyとshorthand propertyを含むオブジェクトリテラル、配列/オブジェクトspread、runtime不要なtype alias消去、`new Class(args)`、条件式内の識別子変換。
 - 制限付き `map`、`filter`、`forEach`、単一式predicateの `some` / `every` / `find` / `findIndex`、単純 `reduce`、単純 `sort`、typed arrow callback、単純block arrow callback、`order` 差分、spaceship、`localeCompare`、`version_compare` / `strcmp` を含む `usort` comparator、および汎用ローカルメソッド呼び出し、ローカル `serverSideClient.method()` / `serverSide.method()` facade呼び出しの変換。
-- ServerFoundation移行向け `Php.*` helper(file/session/password/hash/path/time/json encode/decode/json error/ini/cookie、`$_SERVER` / `$_POST` / `$_SESSION` / `$_FILES`、`file_get_contents('php://input')`、HTTP header、JSON response、session cookie parameter、入力型判定、明示cast、URL/email検証、HTMLエスケープ(`ENT_QUOTES | ENT_SUBSTITUTE`, `UTF-8`既定)、`nl2br(htmlspecialchars(...))`、ファイル/ディレクトリ操作、`FilesystemIterator` 巡回、iterator object method、ファイル存在/読み書き可否/サイズ/mtime確認、アップロード移動、アップロードファイル判定、glob、`preg_match` / `preg_replace` / `preg_split`、`in_array`、`ksort`、`rawurlencode`、文字列長・大文字化・小文字化・分割、`str_starts_with` / `str_ends_with`、`strcmp`、配列unique/search/value整形、配列末尾追記/連想配列set helper、オブジェクトプロパティhelper、`bin2hex` / `base64_encode` / `base64_decode` / `random_bytes`、`echo`、複数キーとthrow armを含むmatch値分岐、InvalidArgumentException/LogicException/RuntimeException/DomainException/UnexpectedValueException throw、isset/empty、配列整形、クエリ生成、PHP実行バージョン参照、バージョン比較、DateTime/DateTimeImmutable、ZipArchive、cURL系)からPHP標準機能への変換。
+- `Php.*` helper(file/session/password/hash/path/time/json encode/decode/json error/ini/cookie、`$_SERVER` / `$_POST` / `$_SESSION` / `$_FILES`、`file_get_contents('php://input')`、HTTP header、JSON response、session cookie parameter、入力型判定、明示cast、URL/email検証、HTMLエスケープ(`ENT_QUOTES | ENT_SUBSTITUTE`, `UTF-8`既定)、`nl2br(htmlspecialchars(...))`、ファイル/ディレクトリ操作、`FilesystemIterator` 巡回、iterator object method、ファイル存在/読み書き可否/サイズ/mtime確認、アップロード移動、アップロードファイル判定、glob、`preg_match` / `preg_replace` / `preg_split`、`in_array`、`ksort`、`rawurlencode`、文字列長・大文字化・小文字化・分割、`str_starts_with` / `str_ends_with`、`strcmp`、配列unique/search/value整形、配列末尾追記/連想配列set helper、オブジェクトプロパティhelper、`bin2hex` / `base64_encode` / `base64_decode` / `random_bytes`、`echo`、複数キーとthrow armを含むmatch値分岐、InvalidArgumentException/LogicException/RuntimeException/DomainException/UnexpectedValueException throw、isset/empty、配列整形、クエリ生成、PHP実行バージョン参照、バージョン比較、DateTime/DateTimeImmutable、ZipArchive、cURL系)からPHP標準機能への変換。
 - パス文字列内のドットをobject風プロパティアクセスとして誤変換しない。
 - 文字列リテラル内のCSS selector、正規表現、URL、表示文言を、識別子変換・プロパティアクセス変換・static参照変換の対象にしない。
 - 深い `this.runtime.serverSideClient.method()` / `this.runtime.config.value` 形式のプロパティチェーン、および引数/ローカル変数として渡された `runtime.serverSideClient` / `runtime.configRoot` 形式を、PHPの `$this->runtime->serverSideClient->method()` / `$this->runtime->config->value` / `$runtime->serverSideClient` 形式へ変換できる。
-- リリース一覧の降順整列に限る固定 `usort` 変換に加え、ServerFoundation移行で頻出する文字列プロパティ昇順/降順比較、配列index比較、バージョン比較を安全なcomparatorとして生成する。
-- 入れ子の静的helper呼び出し、ヘッダ値内セミコロンを含む式文、`self.CONST` を含むServerFoundation実行入口・認証・CSRF周辺構文の変換。
+- リリース一覧の降順整列に限る固定 `usort` 変換に加え、文字列プロパティ昇順/降順比較、配列index比較、バージョン比較を安全なcomparatorとして生成する。
+- 入れ子の静的helper呼び出し、ヘッダ値内セミコロンを含む式文、`self.CONST` を含む実行入口・認証・CSRF周辺構文の変換。
 - 三項演算子内の文字列連結、長いHTML文字列連結、`push({ ... })` のオブジェクトリテラル引数、`Object.entries(...)` の `[key, value]` destructuring foreachを、生成PHPの安全監査に残骸を残さず変換できる。
 - 単体golden、ディレクトリ入力golden、非対応構文/APIの期待失敗テスト、クラス名重複の期待失敗テスト、生成PHPのPHP 8.4構文検証、Node.jsフォールバック経路。Node.jsフォールバックrunnerは `pt.0.59` 本体変換と同等に、static呼び出し結果の文字列メソッド、`String(...).trim()` 系、入れ子引数を持つ `new Class(...)`、文字列リテラル非破壊プロパティ変換を扱う。
 - Deno golden runnerとNode.jsフォールバックrunnerは実行ごとの一時出力先を使用し、連続実行・並列実行時に固定Workディレクトリを奪い合わない。PhpTranspiler本体は出力ディレクトリ作成と生成PHP書き込み時の一時的なEDEADLK/EBUSYをリトライする。
 - 非対応構文として、`export default`、`enum`、`#private`、optional call、動的関数呼び出し、logical assignment、上位ディレクトリimport、rest parameter、type assertionを期待失敗として固定する。
 - 生成PHPコーディング規則と安全監査。ローカル`const`/`let`、`undefined`、未変換template literal、`this.`、未変換 `typeof`、未変換 `Array.isArray`、未変換 `Number.isInteger` / `Number.isFinite`、未変換 `Php.*` helper、未変換cast helper、未変換dotted call、未変換block arrow callback、JSオブジェクトリテラル残骸、未変換の文字列連結operand、未変換インスタンスメソッド呼び出し、未変換メソッド戻り値プロパティアクセス、未変換type/interface宣言、閉じPHPタグ、CRLF、タブ、末尾空白、危険PHP関数、可変変数、変数関数呼び出し、動的include/requireなど、生成PHP規則違反が残った場合はビルドエラーにする。
-- ServerFoundation移行候補として、内部Facade、公開Facade、記事契約、GitHubProvider、言語管理、サイト/広告/ナビ/ページ/テーマ設定、Renderer、ArticleManager、StaticPublisher、Response、Appの主要公開API面をTypeScript正本候補として生成検査に含める。`ArticleManager` の検証/保存/読込/一覧/preview/generationPlan、`StaticPublisher` のprocessOutputs/生成結果検証候補、`GitHubProvider` のGitHub API/リリース/更新ファイル候補、設定系read/save/checksum候補を含める。ServerFoundation公開側・内部側は、現行TS候補全量でPHP実装とのメソッド面差分0件を完了条件として固定する。
+- 実運用で必要になった代表的なAPI面は、TypeScript入力候補として生成検査に含める。
 - 上位ディレクトリimport、rest parameter、type assertionを非対応構文として検出する。
-- 直接オブジェクトリテラル引数、静的メソッド戻り値のプロパティアクセス、メソッド戻り値の `.length` は、ServerFoundation移行クリティカルgoldenで固定する。
+- 直接オブジェクトリテラル引数、静的メソッド戻り値のプロパティアクセス、メソッド戻り値の `.length` は、クリティカルgoldenで固定する。
 - 変換規則が未確定のAPIは現時点では生成対象にせず、検出時にビルドエラーとする。
 
-ServerFoundation全量移行に必要な差分が出た場合は、本章のテストケースを追加した上でPhpTranspiler本体を拡張する。
+変換対象の拡張に必要な差分が出た場合は、本章のテストケースを追加した上でPhpTranspiler本体を拡張する。
 
 生成PHP監査では、`version_compare(..., ">") > 0` のようにboolを返す比較演算子付き `version_compare` を整数比較として扱う残骸を禁止する。
 
@@ -187,12 +187,12 @@ ServerFoundation全量移行に必要な差分が出た場合は、本章のテ�
 
 # 10. 公開・リリース方針
 
-PhpTranspilerは、SF専用ではなく汎用ツールとして設計する。安定版は独立リポジトリ `PhpTranspiler` のGitHub Releasesで公開する。release tagは `phptranspiler-<version>` とする。
+PhpTranspilerは汎用ツールとして設計する。安定版は独立リポジトリ `PhpTranspiler` のGitHub Releasesで公開する。release tagは `phptranspiler-<version>` とする。
 
-**バージョン形式**: `pt.<major>.<minor>`(累積方式、メジャーアップデートの概念なし)。Adlaire Studio本体の`v.0.X`系列とは独立した専用系列とする(`Document_Charter` 第10.3章を参照)。
+**バージョン形式**: `pt.<major>.<minor>`(累積方式、メジャーアップデートの概念なし)。
 
-**採番タイミング**: PhpTranspiler本体(対応構文、組み込みAPI、エラーハンドリング、型・構文マッピングなど、第3〜9章の内容)に変更があった場合に1つ採番する。Adlaire Studio本体のリリースサイクルとは独立して採番できる。
+**採番タイミング**: PhpTranspiler本体(対応構文、組み込みAPI、エラーハンドリング、型・構文マッピングなど、第3〜9章の内容)に変更があった場合に1つ採番する。
 
-**開発正本の配置**: 独立リポジトリ `PhpTranspiler` に配置する。`Adlaire-Ecosystem` にはPhpTranspiler本体を常置せず、ServerFoundationビルド時に独立リポジトリ `PhpTranspiler` の安定版を呼び出す連携部分のみを置く。
+**開発正本の配置**: 独立リポジトリ `PhpTranspiler` に配置する。
 
-**ライセンス・公開範囲**: `Common_Documents/License_Policy` に基づくライセンス方針を継承し、独立リポジトリ `PhpTranspiler` の `LICENSE` で正式なライセンス本文を管理する。公開範囲の具体的事項は、実際の公開時にあらためて決定する。
+**ライセンス・公開範囲**: 独立リポジトリ `PhpTranspiler` の `LICENSE` で正式なライセンス本文を管理する。公開範囲の具体的事項は、実際の公開時にあらためて決定する。

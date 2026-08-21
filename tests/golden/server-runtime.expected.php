@@ -26,7 +26,7 @@ final class ServerRuntimeBridge {
       $secure = ($_SERVER["HTTPS"] ?? "off") !== "off";
       $params = ['lifetime' => 1800, 'httponly' => true, 'samesite' => "Strict", 'secure' => $secure, ];
       ini_set("session.use_strict_mode", "1");
-      session_name("adlaire_studio");
+      session_name("phptranspiler_fixture");
       session_set_cookie_params($params);
       session_start();
     }

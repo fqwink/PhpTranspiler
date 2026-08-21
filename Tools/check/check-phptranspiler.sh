@@ -129,12 +129,8 @@ fi
 
 if command -v php >/dev/null 2>&1; then
   php -v >/dev/null
-elif [ "${ADLAIRE_ECOSYSTEM_ROOT:-}" != "" ] && [ -x "$ADLAIRE_ECOSYSTEM_ROOT/Tools/build/run-build-tool.sh" ]; then
-  "$ADLAIRE_ECOSYSTEM_ROOT/Tools/build/run-build-tool.sh" "$PHPTRANSPILER_ROOT" php -v >/dev/null
-elif [ -x "$PHPTRANSPILER_ROOT/../Adlaire-Ecosystem/Tools/build/run-build-tool.sh" ]; then
-  "$PHPTRANSPILER_ROOT/../Adlaire-Ecosystem/Tools/build/run-build-tool.sh" "$PHPTRANSPILER_ROOT" php -v >/dev/null
 else
-  echo "PhpTranspiler check requires PHP CLI or Adlaire-Ecosystem Docker build tools." >&2
+  echo "PhpTranspiler check requires PHP CLI." >&2
   exit 1
 fi
 
