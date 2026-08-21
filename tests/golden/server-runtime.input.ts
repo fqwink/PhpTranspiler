@@ -33,7 +33,7 @@ export class ServerRuntimeBridge {
         secure: secure,
       };
       Php.iniSet("session.use_strict_mode", "1");
-      Php.sessionName("adlaire_studio");
+      Php.sessionName("phptranspiler_fixture");
       Php.sessionSetCookieParams(params);
       Php.sessionStart();
     }

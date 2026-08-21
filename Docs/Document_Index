@@ -6,5 +6,3 @@
 - `Tools/check/check-phptranspiler.sh`(PhpTranspiler専用の構成・テスト検査)
 - ルート `README.md`
 - ルート `LICENSE`
-- 参照元: `Adlaire-Docs/Common_Documents/Adlaire_Ecosystem_Charter`(Adlaire Ecosystemとの境界)
-- 参照元: `Adlaire-Docs/Document_Charter`(リポジトリ構成とリリース方針)

@@ -1,6 +1,6 @@
 # Generated PHP Standard
 
-PhpTranspilerが生成するPHPは、PHP 8.4以降の安全・安定サブセット向けAdlaire生成PHP規則に従う。PHP 8.5以降で非推奨・廃止・高リスクとなる構文/APIは生成しない。
+PhpTranspilerが生成するPHPは、PHP 8.4以降の安全・安定サブセット向け生成PHP規則に従う。PHP 8.5以降で非推奨・廃止・高リスクとなる構文/APIは生成しない。
 
 ## 基本規則
 
@@ -18,7 +18,7 @@ PhpTranspilerが生成するPHPは、PHP 8.4以降の安全・安定サブセッ
 - 可変変数、変数関数呼び出しを出力しない。
 - 動的 `include` / `require` を出力しない。
 - TypeScript import由来の `require_once __DIR__ . '/...';` のみを許可する。
-- ServerFoundation移行で必要なPHP標準機能は、明示的な `Php.*` helper経由でのみ生成する。
+- PHP標準機能は、明示的な `Php.*` helper経由でのみ生成する。
 - 文字列リテラル内のCSS selector、正規表現、URL、表示文言は、識別子変換、プロパティアクセス変換、static参照変換の対象にしない。
 - 入れ子関数呼び出しを含む `new Class(...)` の引数、static呼び出し結果の文字列メソッド、裸識別子引数を未変換のまま出力しない。
 

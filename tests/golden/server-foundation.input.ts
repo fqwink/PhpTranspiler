@@ -1,5 +1,5 @@
 // @php-declare strict_types=1
-// @php-namespace AdlaireStudio
+// @php-namespace PhpTranspilerFixture
 // @php-use ServerSideLogicFoundationSystem\ServerSideLogicFoundationSystemInternal
 
 export class AuthRuntime {
@@ -11,7 +11,7 @@ export class AuthRuntime {
     private readonly stateFile: string,
   ) {
     if (Php.sessionStatus() !== PHP_SESSION_ACTIVE) {
-      Php.sessionName("adlaire_studio");
+      Php.sessionName("phptranspiler_fixture");
       Php.sessionStart();
     }
   }
@@ -60,7 +60,7 @@ export class AuthRuntime {
   }
 }
 
-export class ServerFoundationFacade {
+export class ExampleFacade {
   public constructor(private readonly auth: AuthRuntime) {
   }
 
@@ -73,11 +73,11 @@ export class ServerFoundationFacade {
   }
 
   public apply(value: string): string {
-    return (new ServerFoundationWorker(value)).run();
+    return (new ExampleWorker(value)).run();
   }
 }
 
-export class ServerFoundationWorker {
+export class ExampleWorker {
   public constructor(private readonly value: string) {
   }
 
@@ -86,4 +86,4 @@ export class ServerFoundationWorker {
   }
 }
 
-// @php-run-unless-defined ADLAIRE_STUDIO_NO_RUN Bootstrap::run (__DIR__)
+// @php-run-unless-defined PHPT_FIXTURE_NO_RUN Bootstrap::run (__DIR__)
