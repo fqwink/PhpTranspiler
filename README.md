@@ -16,6 +16,7 @@ PhpTranspilerは、Adlaire EcosystemのTypeScriptからPHPへの変換を担当�
 - `tests/run-golden.ts`: ゴールデンテストおよび非対応入力テストのランナー。
 - `tests/golden/`: 固定TypeScript入力と期待PHP出力のペア。
 - `tests/errors/`: 固定非対応TypeScript入力と期待エラーのペア。
+- `Tools/check/`: PhpTranspiler専用の検査シェル。
 - `Docs/`: 仕様・設計、変更履歴、生成PHP規則を管理するドキュメント領域。
 
 ## 対応範囲
@@ -55,9 +56,8 @@ Denoまたは専用Dockerがなく、Node.jsが利用できる場合:
 node node-fallback/run-golden.mjs
 ```
 
-Adlaire-Ecosystem側から明示的に参照する場合:
+PhpTranspiler全体検査を実行する場合:
 
 ```sh
-cd /path/to/Adlaire-Ecosystem
-PHPTRANSPILER_ROOT=/path/to/PhpTranspiler sh Tools/build/check-phptranspiler.sh
+sh Tools/check/check-phptranspiler.sh
 ```

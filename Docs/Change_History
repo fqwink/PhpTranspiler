@@ -10,6 +10,12 @@
 
 # 1. 移行記録
 
+## rev.283
+
+- PhpTranspiler専用の検査シェルを `Adlaire-Ecosystem` から `Tools/check/` へ移行した。
+- `Tools/check/check-phptranspiler.sh` と `Tools/check/run-golden.sh` を追加し、Deno、Adlaire-Ecosystem Docker build tools、Node.js fallbackの順に検査経路を選択するようにした。
+- README、AGENTS、文書索引を新しい検査シェル配置へ更新した。
+
 ## rev.282
 
 - ドキュメント集約フォルダ名を `Documents/` から `Docs/` へ変更した。
